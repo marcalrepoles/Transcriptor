@@ -4,8 +4,8 @@ from transcriptor.exporters import export_docx, export_txt
 
 
 def sample_project():
-    return Project(audio_path="reunião.mp3", utterances=[Utterance(72, 74, "Person A", "Olá, ação e coração.")],
-                   speaker_names={"Person A": "João"})
+    return Project(audio_path="reunião.mp3", utterances=[Utterance(72, 74, "Pessoa A", "Olá, ação e coração.")],
+                   speaker_names={"Pessoa A": "João"})
 
 
 def test_txt_uses_edited_unicode_content(tmp_path):
@@ -17,4 +17,3 @@ def test_docx_contains_edited_content(tmp_path):
     path = tmp_path / "out.docx"; export_docx(sample_project(), path)
     text = "\n".join(p.text for p in Document(path).paragraphs)
     assert "João" in text and "Olá, ação e coração." in text
-

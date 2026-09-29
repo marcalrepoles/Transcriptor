@@ -34,7 +34,7 @@ def download_file(url: str, destination: Path, progress: Progress | None = None)
                 output.write(chunk)
                 downloaded += len(chunk)
                 if progress and total:
-                    progress(min(99, int(downloaded * 100 / total)), "Downloading model...")
+                    progress(min(99, int(downloaded * 100 / total)), "Baixando modelo...")
         partial.replace(destination)
         return destination
     except Exception:
@@ -47,10 +47,10 @@ def download_whisper(model_id: str, progress: Progress | None = None) -> Path:
     target = whisper_path(model_id)
     target.parent.mkdir(parents=True, exist_ok=True)
     if progress:
-        progress(0, f"Downloading {model_id}...")
+        progress(0, f"Baixando {model_id}...")
     download_model(model_id, output_dir=str(target))
     if progress:
-        progress(100, "Model ready.")
+        progress(100, "Modelo pronto.")
     return target
 
 
@@ -79,5 +79,4 @@ def download_diarization(progress: Progress | None = None) -> None:
                 shutil.rmtree(staging)
             archive_path.unlink(missing_ok=True)
     if progress:
-        progress(100, "Speaker models ready.")
-
+        progress(100, "Modelos de locutores prontos.")

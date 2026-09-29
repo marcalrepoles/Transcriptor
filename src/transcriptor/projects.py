@@ -20,14 +20,20 @@ def load_project(path: str | Path) -> Project:
     source = Path(path)
     data = json.loads(source.read_text(encoding="utf-8"))
     if data.get("format_version") != 1:
-        raise ValueError("Unsupported project format version")
+        raise ValueError("Versão do formato de projeto não suportada")
+    def translated_speaker(value: str) -> str:
+        return "Pessoa " + value[7:] if value.startswith("Person ") else value
+
+    speaker_names = {translated_speaker(key): value for key, value in data.get("speaker_names", {}).items()}
+    utterances = [Utterance.from_dict(item) for item in data.get("utterances", [])]
+    for utterance in utterances:
+        utterance.speaker_id = translated_speaker(utterance.speaker_id)
     project = Project(
         audio_path=data.get("audio_path", ""), model=data.get("model", "small"),
-        language=data.get("language"), speakers=str(data.get("speakers", "Auto")),
+        language=data.get("language"), speakers=str(data.get("speakers", "Automático")).replace("Auto", "Automático"),
         duration=float(data.get("duration", 0)),
-        speaker_names=dict(data.get("speaker_names", {})),
-        utterances=[Utterance.from_dict(item) for item in data.get("utterances", [])],
+        speaker_names=speaker_names,
+        utterances=utterances,
         project_path=str(source), dirty=False,
     )
     return project
-

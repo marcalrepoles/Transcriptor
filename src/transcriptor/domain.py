@@ -35,7 +35,7 @@ class Project:
     audio_path: str = ""
     model: str = "small"
     language: str | None = None
-    speakers: str = "Auto"
+    speakers: str = "Automático"
     utterances: list[Utterance] = field(default_factory=list)
     speaker_names: dict[str, str] = field(default_factory=dict)
     duration: float = 0.0
@@ -71,5 +71,4 @@ class Project:
 
     @property
     def audio_name(self) -> str:
-        return Path(self.audio_path).name if self.audio_path else "Transcript"
-
+        return Path(self.audio_path).name if self.audio_path else "Transcrição"

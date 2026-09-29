@@ -20,7 +20,7 @@ def export_txt(project: Project, path: str | Path) -> None:
 def export_docx(project: Project, path: str | Path) -> None:
     document = Document()
     document.add_heading(project.audio_name, level=0)
-    document.add_paragraph(f"Exported {datetime.now():%Y-%m-%d %H:%M}")
+    document.add_paragraph(f"Exportado em {datetime.now():%d/%m/%Y %H:%M}")
     for utterance in project.utterances:
         p = document.add_paragraph()
         p.add_run(f"[{format_timestamp(utterance.start)}] {project.display_name(utterance.speaker_id)}: ").bold = True

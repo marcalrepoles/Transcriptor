@@ -18,8 +18,7 @@ def _load_model(model_id: str):
         return WhisperModel(path, device="cpu", compute_type="int8"), "CPU"
 
 
-def transcribe(path: str, model_id: str, progress=None) -> tuple[list[Word], str | None, str]:
-    model, hardware = _load_model(model_id)
+def _transcribe_with_model(model, path: str, progress=None) -> tuple[list[Word], str | None]:
     segments, info = model.transcribe(path, word_timestamps=True, vad_filter=True)
     words: list[Word] = []
     for segment in segments:
@@ -28,5 +27,20 @@ def transcribe(path: str, model_id: str, progress=None) -> tuple[list[Word], str
         else:
             words.append(Word(float(segment.start), float(segment.end), segment.text))
         if progress:
-            progress(-1, "Transcribing...")
-    return words, getattr(info, "language", None), hardware
+            progress(-1, "Transcrevendo...")
+    return words, getattr(info, "language", None)
+
+
+def transcribe(path: str, model_id: str, progress=None) -> tuple[list[Word], str | None, str]:
+    model, hardware = _load_model(model_id)
+    try:
+        words, language = _transcribe_with_model(model, path, progress)
+    except Exception as error:
+        if hardware != "NVIDIA GPU":
+            raise
+        log.warning("CUDA inference failed, retrying on CPU: %s", error)
+        from faster_whisper import WhisperModel
+        model = WhisperModel(str(whisper_path(model_id)), device="cpu", compute_type="int8")
+        hardware = "CPU"
+        words, language = _transcribe_with_model(model, path, progress)
+    return words, language, hardware

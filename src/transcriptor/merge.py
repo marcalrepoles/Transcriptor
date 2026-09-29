@@ -10,7 +10,7 @@ def _overlap(start: float, end: float, interval: SpeakerInterval) -> float:
 def assign_speakers(words: list[Word], intervals: list[SpeakerInterval]) -> list[tuple[Word, str]]:
     """Assign each word once, preferring overlap and then nearest interval."""
     if not intervals:
-        return [(word, "Person A") for word in words]
+        return [(word, "Pessoa A") for word in words]
     ordered = sorted(intervals, key=lambda item: item.start)
     assigned: list[tuple[Word, str]] = []
     for word in words:
@@ -45,4 +45,3 @@ def _join_text(left: str, right: str) -> str:
 
 def merge_transcript(words: list[Word], intervals: list[SpeakerInterval]) -> list[Utterance]:
     return group_words(assign_speakers(words, intervals))
-
